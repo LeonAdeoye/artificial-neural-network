@@ -9,6 +9,30 @@ def normalize_data(df):
     return (df - df.min()) / (df.max() - df.min())
 
 
+# Calculate correlation matrix manually.
+def calculate_correlation_matrix(predictions, actual_values):
+    array1 = predictions.view(-1)
+    array2 = actual_values.view(-1)
+
+    mean1 = array1.mean()
+    mean2 = array2.mean()
+
+    # Calculate the centered arrays
+    centered1 = array1 - mean1
+    centered2 = array2 - mean2
+
+    # Calculate covariance
+    covariance = torch.dot(centered1, centered2) / (len(array1) - 1)
+
+    # Calculate standard deviations
+    std_dev1 = torch.sqrt(torch.sum(centered1 ** 2) / (len(array1) - 1))
+    std_dev2 = torch.sqrt(torch.sum(centered2 ** 2) / (len(array2) - 1))
+
+    # Calculate the correlation coefficient
+    correlation_coefficient = covariance / (std_dev1 * std_dev2)
+    print("Correlation Coefficient:", correlation_coefficient.item())
+
+
 def read_concrete_data():
     # Read the Excel file into a DataFrame
     df = pd.read_csv("concrete.csv")
@@ -99,30 +123,6 @@ def read_concrete_data():
         print(predictions)
         print(y_test_tensor)
         calculate_correlation_matrix(predictions, y_test_tensor)
-
-
-# Calculate correlation matrix manually.
-def calculate_correlation_matrix(predictions, actuals):
-    array1 = predictions.view(-1)
-    array2 = actuals.view(-1)
-
-    mean1 = array1.mean()
-    mean2 = array2.mean()
-
-    # Calculate the centered arrays
-    centered1 = array1 - mean1
-    centered2 = array2 - mean2
-
-    # Calculate covariance
-    covariance = torch.dot(centered1, centered2) / (len(array1) - 1)
-
-    # Calculate standard deviations
-    std_dev1 = torch.sqrt(torch.sum(centered1 ** 2) / (len(array1) - 1))
-    std_dev2 = torch.sqrt(torch.sum(centered2 ** 2) / (len(array2) - 1))
-
-    # Calculate the correlation coefficient
-    correlation_coefficient = covariance / (std_dev1 * std_dev2)
-    print("Correlation Coefficient:", correlation_coefficient.item())
 
 
 if __name__ == '__main__':
