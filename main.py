@@ -8,6 +8,7 @@ def normalize_data(df):
     # Apply Min-Max scaling to normalize the data
     return (df - df.min()) / (df.max() - df.min())
 
+
 def read_concrete_data():
     # Read the Excel file into a DataFrame
     df = pd.read_csv("concrete.csv")
@@ -47,7 +48,6 @@ def read_concrete_data():
     y_train_tensor = torch.tensor(y_train_array, dtype=torch.float32).unsqueeze(1)
     X_test_tensor = torch.tensor(X_test_array, dtype=torch.float32)
     y_test_tensor = torch.tensor(y_test_array, dtype=torch.float32).unsqueeze(1)  # Adding extra dimension
-
 
     class NeuralNetworkWIHTOUTHiddenLayer(nn.Module):
         def __init__(self):
