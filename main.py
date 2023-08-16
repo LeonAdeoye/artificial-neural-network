@@ -73,6 +73,7 @@ def read_concrete_data():
     X_test_tensor = torch.tensor(X_test_array, dtype=torch.float32)
     y_test_tensor = torch.tensor(y_test_array, dtype=torch.float32).unsqueeze(1)  # Adding extra dimension
 
+    # Neural net class
     class NeuralNetworkWIHTOUTHiddenLayer(nn.Module):
         def __init__(self):
             super(NeuralNetworkWIHTOUTHiddenLayer, self).__init__()
