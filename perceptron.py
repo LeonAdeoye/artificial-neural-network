@@ -2,6 +2,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# Colormaps in matplotlib are used to map scalar data (typically in the form of intensities or values) to colors.
+# They are often used in visualizations to represent different values with distinct colors.
+# The ListedColormap class specifically allows you to create custom colormaps by specifying a list of colors that the colormap should use.
+from matplotlib.colors import ListedColormap
+
 
 class Perceptron(object):
     """Implements a perceptron classifier
@@ -126,8 +131,12 @@ def prepare_data():
     print("\nTail of X:")
     print(X[-5:])
 
+    ppn = Perceptron(eta=0.1, n_iter=10)  # Create a perceptron object with a learning rate of 0.1 and 10 iterations
+    ppn.fit(X, y)  # Fit the perceptron object to the training data
+
     # plot_scatter(X)
-    plot_errors(X, y)
+    # plot_errors(X, y, ppn)
+    plot_decision_regions(X, y, ppn)
 
 
 def plot_scatter(X):
@@ -142,9 +151,7 @@ def plot_scatter(X):
     plt.show()
 
 
-def plot_errors(X, y):
-    ppn = Perceptron(eta=0.1, n_iter=10)  # Create a perceptron object with a learning rate of 0.1 and 10 iterations
-    ppn.fit(X, y)  # Fit the perceptron object to the training data
+def plot_errors(X, y, classifier):
     # Generates a line plot with x-axis values ranging from 1 to the length of the ppn.errors_ list.
     # The y-axis values are taken from the ppn.errors_ list.
     # Each data point on the plot is marked with a circle ('o') marker.
@@ -154,7 +161,42 @@ def plot_errors(X, y):
     plt.ylabel('Number of mis-classifications')  # Label the y-axis
     plt.show()
 
+# TODO: Understand this function
+def plot_decision_regions(X, y, classifier, resolution=0.02):
+    # setup marker generator and color map
+    markers = ('s', 'x', 'o', '^', 'v')  # Create a tuple of markers
+    colors = ('red', 'blue', 'lightgreen', 'gray', 'cyan')  # Create a tuple of colours
+    # cmap = ListedColormap(colors[:len(np.unique(y))]): This line creates a colormap using the ListedColormap class. It does the following:
+    # np.unique(y): This uses the NumPy library to find the unique values in the array y.
+    # Assuming that y is a one-dimensional array or list, np.unique(y) will return the unique elements in y.
+    # len(np.unique(y)): This calculates the number of unique elements in y.
+    # colors[:len(np.unique(y))]: This slices the colors tuple to include only the first n colors, where n is the number of unique elements in y.
+    # ListedColormap(...): This creates a colormap using the specified colors.
+    cmap = ListedColormap(colors[:len(np.unique(y))])  # Create a colour map
 
+    # plot the decision surface
+    # The first two lines of code create a meshgrid of two-dimensional coordinates that cover the feature space.
+    x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1  # Get the minimum and maximum values of the first feature column
+    x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1  # Get the minimum and maximum values of the second feature column
+
+    # np.arange(x1_min, x1_max, resolution): This creates a one-dimensional array of values ranging from x1_min to x1_max with a step size of resolution.
+    # np.arange(x2_min, x2_max, resolution): This creates a one-dimensional array of values ranging from x2_min to x2_max with a step size of resolution.
+    xx1, xx2 = np.meshgrid(np.arange(x1_min, x1_max, resolution),  np.arange(x2_min, x2_max, resolution))
+
+    Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)  # Predict the class labels for the corresponding two-dimensional points in the feature space.
+    Z = Z.reshape(xx1.shape)  # Reshape the predicted class labels Z into a grid with the same dimensions as xx1 and xx2.
+    plt.contourf(xx1, xx2, Z, alpha=0.4, cmap=cmap)  # Draw a filled contour plot using the grid arrays and the class labels Z.
+    plt.xlim(xx1.min(), xx1.max())  # Set the x-axis limits to the minimum and maximum values of the first feature column.
+    plt.ylim(xx2.min(), xx2.max())  # Set the y-axis limits to the minimum and maximum values of the second feature column.
+
+    # plot class samples
+    for idx, cl in enumerate(np.unique(y)):  # Enumerate over the unique class labels in y.
+        plt.scatter(x=X[y == cl, 0], y=X[y == cl, 1], alpha=0.8, c=cmap(idx),  marker=markers[idx], label=cl)  # Plot the class samples.
+
+    plt.xlabel('sepal length [cm]')  # Label the x-axis
+    plt.ylabel('petal length [cm]')  # Label the y-axis
+    plt.legend(loc='upper left')  # Add a legend in the upper left corner
+    plt.show()
 
 
 
