@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+from perceptron import prepare_data
+
 
 def normalize_data(df):
     # Apply Min-Max scaling to normalize the data
@@ -73,7 +75,7 @@ def read_concrete_data():
     X_test_tensor = torch.tensor(X_test_array, dtype=torch.float32)
     y_test_tensor = torch.tensor(y_test_array, dtype=torch.float32).unsqueeze(1)  # Adding extra dimension
 
-    # Neural net class
+    # Neural net class without hidden layer
     class NeuralNetworkWIHTOUTHiddenLayer(nn.Module):
         def __init__(self):
             super(NeuralNetworkWIHTOUTHiddenLayer, self).__init__()
@@ -85,6 +87,7 @@ def read_concrete_data():
             x = self.fc2(x)
             return x
 
+    # Neural net class with hidden layer
     class DeepNeuralNetworkWithHiddenLayer(nn.Module):
         def __init__(self):
             super(DeepNeuralNetworkWithHiddenLayer, self).__init__()
@@ -127,5 +130,5 @@ def read_concrete_data():
 
 
 if __name__ == '__main__':
-    read_concrete_data()
-
+    #  read_concrete_data()
+    prepare_data()
